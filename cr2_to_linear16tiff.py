@@ -8,7 +8,7 @@ def convert_dir(in_dir: str):
         return False
     
     for raw_image_name in os.listdir(in_dir):
-        if not raw_image_name[-4:] == '.cr2':
+        if len(raw_image_name.split('.')) != 2 or raw_image_name.split('.')[1] != 'cr2':
             continue
 
         raw = rawpy.imread(os.path.join(in_dir, raw_image_name))
@@ -17,7 +17,7 @@ def convert_dir(in_dir: str):
         out_dir = os.path.join(in_dir, 'tiff')
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        tiff_image_name = raw_image_name[:-4] + '.tiff'
+        tiff_image_name = raw_image_name.split('.')[0] + '.tiff'
         print(f'saving {os.path.join(out_dir, tiff_image_name)}')
         imageio.imsave(os.path.join(out_dir, tiff_image_name), rgb)
 
