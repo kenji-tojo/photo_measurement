@@ -35,7 +35,7 @@ def load_from_directory(in_dir: str):
         in_path = os.path.join(in_dir, image_name)
         load_linear16tiff(in_path, print_info=True)
 
-def load_and_mask(in_path: str, thresh: float = 5e3):
+def load_and_mask(in_path: str, thresh: float = 4e3):
     if not (len(in_path) > 5 and in_path[-5:] == '.tiff'):
         assert False
     
@@ -63,6 +63,10 @@ def load_and_mask(in_path: str, thresh: float = 5e3):
     plt.clf()
     plt.imshow(img.astype(np.float32))
     plt.savefig('./output/out.png')
+
+    plt.clf()
+    plt.hist(img_gray[img_gray>thresh/UINT16_MAX].flatten(), bins=100)
+    plt.savefig('./output/hist.png')
     
     return True
     
