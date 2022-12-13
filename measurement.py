@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 
 UINT16_MAX = np.iinfo(np.uint16).max
 
+def linear_rgb_to_linear_y(image_rgb: np.ndarray) -> np.ndarray:
+    assert len(image_rgb.shape) == 3 and image_rgb.shape[2] == 3
+    return .2126 * image_rgb[:,:,0] + .7152 * image_rgb[:,:,1] + .0722 * image_rgb[:,:,2]
+    
+
 def load_linear16tiff(in_path: str, print_info: bool = False):
     print(in_path)
     assert len(in_path) > 5 and in_path[-5:] == '.tiff'
@@ -32,17 +37,19 @@ def load_from_directory(in_dir: str):
 
 def load_and_mask(in_path: str, thresh: float = 5e3):
     if not (len(in_path) > 5 and in_path[-5:] == '.tiff'):
-        return False
+        assert False
     
     img = load_linear16tiff(in_path, print_info=True)
-    img_gray = np.mean(img, axis=2)
+    assert len(img.shape) == 3
+    img_gray = linear_rgb_to_linear_y(img)
+    print(f'max: {np.max(img_gray.flatten())}')
+    img = np.repeat(img_gray[:,:,None], 3, axis=2)
     mask = (img_gray > (thresh / UINT16_MAX)).astype(np.float64)
     inv_mask = 1. - mask
     mask = np.repeat(mask[:,:,None], 3, axis=2)
     inv_mask = np.repeat(inv_mask[:,:,None], 3, axis=2)
-    red = np.repeat(np.array([[1,0,0]]), img_gray.shape[0], axis=0)
+    red = np.repeat(np.array([[0,.8,0]]), img_gray.shape[0], axis=0)
     red = np.repeat(red[:,None,:], img_gray.shape[1], axis=1)
-    print(red)
     img = img * mask + inv_mask * red
 
     plt.clf()
