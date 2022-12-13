@@ -6,7 +6,8 @@ def load_linear16tiff(in_dir: str, print_info: bool = False):
     if not os.path.exists(in_dir):
         print('directory does not exists')
         assert False
-    
+
+    UINT16_MAX = np.iinfo(np.uint16).max
     for image_name in os.listdir(in_dir):
         if len(image_name.split('.')) != 2 or image_name.split('.')[1] != 'tiff':
             continue
@@ -18,7 +19,7 @@ def load_linear16tiff(in_dir: str, print_info: bool = False):
             print(f'dtype = {img.dtype}')
             [width, height, channels] = img.shape
             print(f'{width}x{height}x{channels}')
-            img = img.astype(np.float64)
+            img = img.astype(np.float64) / UINT16_MAX
             average = np.mean(img.flatten())
             print(f'average = {average}')
             print('------')
