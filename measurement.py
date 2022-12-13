@@ -48,13 +48,21 @@ def load_and_mask(in_path: str, thresh: float = 5e3):
     inv_mask = 1. - mask
     mask = np.repeat(mask[:,:,None], 3, axis=2)
     inv_mask = np.repeat(inv_mask[:,:,None], 3, axis=2)
-    red = np.repeat(np.array([[0,.8,0]]), img_gray.shape[0], axis=0)
+    red = np.repeat(np.array([[.8,0,0]]), img_gray.shape[0], axis=0)
     red = np.repeat(red[:,None,:], img_gray.shape[1], axis=1)
     img = img * mask + inv_mask * red
 
+    mask = (img_gray < 1.0).astype(np.float64)
+    inv_mask = 1. - mask
+    mask = np.repeat(mask[:,:,None], 3, axis=2)
+    inv_mask = np.repeat(inv_mask[:,:,None], 3, axis=2)
+    green = np.repeat(np.array([[0,.8,0]]), img_gray.shape[0], axis=0)
+    green = np.repeat(green[:,None,:], img_gray.shape[1], axis=1)
+    img = img * mask + inv_mask * green
+
     plt.clf()
     plt.imshow(img.astype(np.float32))
-    plt.show()
+    plt.savefig('./output/out.png')
     
     return True
     
