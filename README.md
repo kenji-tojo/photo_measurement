@@ -1,1 +1,1 @@
-# Measuring Lights from Raw Photographs
+# Measuring Light from Raw Photographs
