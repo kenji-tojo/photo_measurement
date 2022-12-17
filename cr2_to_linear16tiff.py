@@ -44,7 +44,6 @@ def convert_dir(in_dir: str) -> None:
         imageio.imsave(out_path, (img * UINT16_MAX).astype(np.uint16))
 
         img = img.flatten()
-        size = len(img)
         hist, _ = np.histogram(img, bins=100)
         img = np.sort(img)
         print(f'remove {hist[0]} / {len(img)} pixels as lower outliers')
@@ -52,6 +51,7 @@ def convert_dir(in_dir: str) -> None:
         upper = np.quantile(img, .99)
         print(f'remove {len(img[img >= upper])} / {len(img)} pixels as upper outliers')
         img = img[img < upper]
+        print(f'max (after filtering): {np.max(img)}')
         plt.clf()
         plt.hist(img, bins=100)
         out_path = os.path.join(os.path.dirname(out_path), raw_image_name.split('.')[0] + '_gray_hist.png')
