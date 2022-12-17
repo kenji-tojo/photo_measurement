@@ -3,6 +3,7 @@ import imageio
 import os
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 UINT16_MAX = np.iinfo(np.uint16).max
 
@@ -37,10 +38,24 @@ def convert_dir(in_dir: str) -> None:
 
         img = np.array(cv2.imread(out_path, cv2.IMREAD_UNCHANGED))
         img = np.array(img, dtype=np.float32) / UINT16_MAX
+        img = linear_rgb_to_linear_y(img)
         print(f'max: {np.max(img.flatten())}')
         out_path = os.path.join(os.path.dirname(out_path), raw_image_name.split('.')[0] + '_gray.tiff')
-        img = (img * UINT16_MAX).astype(np.uint16)
         imageio.imsave(out_path, (img * UINT16_MAX).astype(np.uint16))
+
+        img = img.flatten()
+        size = len(img)
+        hist, _ = np.histogram(img, bins=100)
+        img = np.sort(img)
+        print(f'remove {hist[0]} / {len(img)} pixels as lower outliers')
+        img = img[hist[0]:]
+        upper = np.quantile(img, .99)
+        print(f'remove {len(img[img >= upper])} / {len(img)} pixels as upper outliers')
+        img = img[img < upper]
+        plt.clf()
+        plt.hist(img, bins=100)
+        out_path = os.path.join(os.path.dirname(out_path), raw_image_name.split('.')[0] + '_gray_hist.png')
+        plt.savefig(out_path)
 
     return True
 
