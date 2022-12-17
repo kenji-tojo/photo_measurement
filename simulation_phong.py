@@ -55,9 +55,11 @@ if __name__ == '__main__':
 
     out_path = os.path.join(OUT_DIR, args.output)
     plt.clf()
-    phong = Phong(args.n)
-    x, y = phong.radial_distribution()
-    plt.plot(x, y, label=f'n = {args.n}')
+    for n in range(args.n - 50, args.n + 51, 50):
+        phong = Phong(n)
+        x, y = phong.radial_distribution()
+        linestyle = 'solid' if n == args.n else 'dashed'
+        plt.plot(x, y, label=f'n = {n}', linestyle=linestyle)
     # save_histogram(phong.sample_cos2_weighted(n_samples=args.samples),
     #             bins=args.bins,
     #             out_path=out_path)
