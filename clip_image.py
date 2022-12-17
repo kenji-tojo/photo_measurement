@@ -42,5 +42,5 @@ if __name__ == '__main__':
     parser.add_argument('input', help='path to input image')
     parser.add_argument('-r', '--ratio', type=float, default=0.5, help='clip ratio')
     args = parser.parse_args()
-    # clip_image(args.input, args.ratio)
-    clip_image_pix(args.input, (666, 1170, 193, 697))
+    clip_image(args.input, args.ratio)
+    # clip_image_pix(args.input, (666, 1170, 193, 697)) # phon3

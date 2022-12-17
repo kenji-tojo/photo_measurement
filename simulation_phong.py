@@ -55,12 +55,18 @@ if __name__ == '__main__':
 
     out_path = os.path.join(OUT_DIR, args.output)
     plt.clf()
-    for n in range(5, 50, 5):
-        # phong = Phong(args.n)
-        phong = Phong(n)
-        x, y = phong.radial_distribution()
-        plt.plot(x, y)
-        # save_histogram(phong.sample_cos2_weighted(n_samples=args.samples),
-        #             bins=args.bins,
-        #             out_path=out_path)
-    plt.savefig(out_path)
+    phong = Phong(args.n)
+    x, y = phong.radial_distribution()
+    plt.plot(x, y, label=f'n = {args.n}')
+    # save_histogram(phong.sample_cos2_weighted(n_samples=args.samples),
+    #             bins=args.bins,
+    #             out_path=out_path)
+    data = np.load('output/phong3_data.npy')
+    data /= np.max(data)
+    data -= np.min(data)
+    plt.plot(np.linspace(0,1,len(data)), data, label='data')
+    plt.legend()
+    plt.title(R'Phong (specular): $\cos^n(\alpha)$')
+    plt.xlabel('r')
+    plt.savefig('output/fit.png')
+    # plt.savefig(out_path)
